@@ -1,0 +1,76 @@
+* Docker manually
+** Build Dockerfile
+
+   #+BEGIN_SRC sh
+     docker build -t learn-rails .
+   #+END_SRC
+
+** Start the container
+
+   #+BEGIN_SRC sh
+     docker run -it --rm -v $PWD:/learn -p 3000:3000 learn-rails bash
+   #+END_SRC
+
+** Start the server
+
+   #+BEGIN_SRC sh
+     rails server
+   #+END_SRC
+
+** Browse the page
+
+   From a new terminal enter:
+
+   #+BEGIN_SRC sh
+     docker ps
+     docker inspect <CONTAINER_NAME>
+   #+END_SRC
+
+   Find the IP address of the container and visit the page on [[172.17.0.?:3000]]
+
+* Docker-compose
+** Build and run
+   #+BEGIN_SRC sh
+     docker-compose build
+     docker-compose up
+   #+END_SRC
+
+   Browse the page on: [[http://localhost:3000/]]
+
+** Attach to a container
+
+   #+BEGIN_SRC sh
+     docker exec -it rails bash
+   #+END_SRC
+
+** Remove all containers
+
+   #+BEGIN_SRC sh
+     # Stop all containers
+     docker stop $(docker ps -a -q)
+     # Delete all containers
+     docker rm $(docker ps -a -q)
+     # Delete all images
+     docker rmi $(docker images -q)
+   #+END_SRC
+
+* Rails learning
+
+  Show the routes:
+
+  #+BEGIN_SRC sh
+    rake routes
+  #+END_SRC
+
+  Create a new migrations:
+
+  #+BEGIN_SRC sh
+    rails generate model Article title:string text:text
+  #+END_SRC
+
+  After a migration is created. Migrate it do the DB.
+  When running in development environment, the =development= settings will be user in [[./blog/config/database.yml][database.yml]].
+
+  #+BEGIN_SRC sh
+    rake db:migrate
+  #+END_SRC
