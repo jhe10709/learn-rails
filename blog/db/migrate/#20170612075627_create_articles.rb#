@@ -1,0 +1,13 @@
+class CreateArticles < ActiveRecord::Migration
+  def change
+o    create_table :articles do |t|
+      t.string :title
+      t.text :textdefg
+
+
+      
+de
+      t.timestamps
+    end
+  end
+end
