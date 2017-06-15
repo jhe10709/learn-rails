@@ -6,7 +6,7 @@ development:
   pool: 5
   username: learn
   password: learn
-  host: mysql-learn-db
+  host: learn-mysql
   port: 3306
 
 

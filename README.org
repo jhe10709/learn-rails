@@ -1,51 +1,96 @@
-* Docker manually
-** Build Dockerfile
+* Docker readme
 
-   #+BEGIN_SRC sh
-     docker build -t learn-rails .
-   #+END_SRC
+Install =docker= and =docker-compose=.
 
-** Start the container
+** Build the environment
 
-   #+BEGIN_SRC sh
-     docker run -it --rm -v $PWD:/learn -p 3000:3000 learn-rails bash
-   #+END_SRC
-
-** Start the server
-
-   #+BEGIN_SRC sh
-     rails server
-   #+END_SRC
-
-** Browse the page
-
-   From a new terminal enter:
-
-   #+BEGIN_SRC sh
-     docker ps
-     docker inspect <CONTAINER_NAME>
-   #+END_SRC
-
-   Find the IP address of the container and visit the page on [[172.17.0.?:3000]]
-
-* Docker-compose
-** Build and run
    #+BEGIN_SRC sh
      docker-compose build
-     docker-compose up
    #+END_SRC
 
-   Browse the page on: [[http://localhost:3000/]]
+** Fix config files
 
-** Attach to a container
+   Add the following to: [[./config/database.yml]]
 
-   #+BEGIN_SRC sh
-     docker exec -it rails bash
+   #+BEGIN_SRC text
+     development:
+       adapter: mysql2
+       encoding: utf8
+       reconnect: false
+       database: learn_development
+       pool: 5
+       username: learn
+       password: learn
+       host: learn-mysql
+       port: 3306
    #+END_SRC
 
-** Remove all containers
+   Add the follwing to: [[./config/secrets.yml]]
+
+   #+BEGIN_SRC text :dir ~/Git/learn-rails
+     development:
+       secret_key_base: 'something'
+   #+END_SRC
+
+
+** Start the environment
+
+   This will start the environment in daemon mode. To check the running containers use
+   =docker ps=.
+
+   #+BEGIN_SRC shell :dir ~/Git/learn-rails :results none
+     docker-compose up -d
+   #+END_SRC
+
+
+** Fix database
+
+   Run the following from a the project root. Not in a container. This will migrate and do
+   related stuff to the database.
+
+   #+BEGIN_SRC shell :dir ~/Git/learn-rails :results none
+     docker-compose run learn-rails bundle exec rake db:schema:load
+   #+END_SRC
+
+   #+BEGIN_SRC shell :dir ~/Git/learn-rails :results none
+     docker-compose run learn-rails bundle exec rake db:seed
+   #+END_SRC
+
+   #+BEGIN_SRC shell :dir ~/Git/learn-rails :results none
+     docker-compose run learn-rails bundle exec rake locales:sync
+   #+END_SRC
+
+   #+BEGIN_SRC shell :dir ~/Git/learn-rails :results none
+     docker-compose run learn-rails bundle exec rake db:migrate
+   #+END_SRC
+
+** Debugging
+
+   This will attach to the running container and have stdin available.
+   This makes it possible to interact with [[https://github.com/pry/pry][pry]].
 
    #+BEGIN_SRC sh
+     docker attach learn-rails
+   #+END_SRC
+
+   I have tried =byebug= but the application crashes when entering the breakpoint.
+
+
+** Attach to the bash in Rails container
+
+   This will attach to the running Rails container and give you a bash shell.
+
+   #+BEGIN_SRC sh
+     docker exec -it learn-rails bash
+   #+END_SRC
+
+** Visit the site
+
+   http://localhost:3000
+
+** Stop and remove all containers
+
+   #+BEGIN_SRC shell
      # Stop all containers
      docker stop $(docker ps -a -q)
      # Delete all containers
@@ -58,13 +103,43 @@
 
   Show the routes:
 
-  #+BEGIN_SRC sh
-    rake routes
+  #+BEGIN_SRC shell :results drawer :dir ~/Git/learn-rails
+    docker-compose run learn-rails rake routes
   #+END_SRC
+
+  #+RESULTS:
+  :RESULTS:
+                Prefix Verb   URI Pattern                                       Controller#Action
+              articles GET    /articles(.:format)                               articles#index
+                       POST   /articles(.:format)                               articles#create
+           new_article GET    /articles/new(.:format)                           articles#new
+          edit_article GET    /articles/:id/edit(.:format)                      articles#edit
+               article GET    /articles/:id(.:format)                           articles#show
+                       PATCH  /articles/:id(.:format)                           articles#update
+                       PUT    /articles/:id(.:format)                           articles#update
+                       DELETE /articles/:id(.:format)                           articles#destroy
+                  root GET    /                                                 welcome#index
+      article_comments GET    /articles/:article_id/comments(.:format)          comments#index
+                       POST   /articles/:article_id/comments(.:format)          comments#create
+   new_article_comment GET    /articles/:article_id/comments/new(.:format)      comments#new
+  edit_article_comment GET    /articles/:article_id/comments/:id/edit(.:format) comments#edit
+       article_comment GET    /articles/:article_id/comments/:id(.:format)      comments#show
+                       PATCH  /articles/:article_id/comments/:id(.:format)      comments#update
+                       PUT    /articles/:article_id/comments/:id(.:format)      comments#update
+                       DELETE /articles/:article_id/comments/:id(.:format)      comments#destroy
+                       GET    /articles(.:format)                               articles#index
+                       POST   /articles(.:format)                               articles#create
+                       GET    /articles/new(.:format)                           articles#new
+                       GET    /articles/:id/edit(.:format)                      articles#edit
+                       GET    /articles/:id(.:format)                           articles#show
+                       PATCH  /articles/:id(.:format)                           articles#update
+                       PUT    /articles/:id(.:format)                           articles#update
+                       DELETE /articles/:id(.:format)                           articles#destroy
+  :END:
 
   Create a new migrations:
 
-  #+BEGIN_SRC sh
+  #+BEGIN_SRC shell :dir ~/Git/learn-rails
     rails generate model Article title:string text:text
   #+END_SRC
 

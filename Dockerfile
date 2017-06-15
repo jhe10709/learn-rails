@@ -1,14 +1,14 @@
 FROM ruby:2.3.4
 MAINTAINER john.herrlin@sigma.se
 
-RUN apt-get update
-RUN apt-get install -y build-essential libmysqlclient-dev mysql-client ruby-mysql2
+RUN apt-get update -qq && \
+    apt-get install -y build-essential libmysqlclient-dev mysql-client ruby-mysql2
 
-ADD ./blog /learn/blog
-WORKDIR /learn/blog
+ADD Gemfile /learn/Gemfile
+ADD Gemfile.lock /learn/Gemfile.lock
+WORKDIR /learn
 
-RUN gem install bundler
-RUN gem install -v 4.1.6 rails
-RUN bundle install
+RUN bundle install && \
+    gem install pry
 
-CMD ["rails", "server"]
+CMD ["bundle", "exec", "rails", "server"]

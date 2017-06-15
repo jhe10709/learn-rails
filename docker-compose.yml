@@ -1,17 +1,19 @@
 version: '3'
 services:
-  mysql-learn-db:
-    container_name: mysql-learn-db
+  learn-mysql:
+    container_name: learn-mysql
     image: "mysql"
     env_file: ./db.env
     expose:
       - 3306
-  web:
+  learn-rails:
     build: .
-    container_name: rails
+    container_name: learn-rails
+    stdin_open: true
+    tty: true
     ports:
       - "3000:3000"
     volumes:
       - .:/learn
     depends_on:
-      - mysql-learn-db
+      - learn-mysql
