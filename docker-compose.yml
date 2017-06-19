@@ -15,5 +15,6 @@ services:
       - "3000:3000"
     volumes:
       - .:/learn
+      - .pryrc:/root/.pryrc
     depends_on:
       - learn-mysql

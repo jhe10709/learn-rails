@@ -8,7 +8,6 @@ ADD Gemfile /learn/Gemfile
 ADD Gemfile.lock /learn/Gemfile.lock
 WORKDIR /learn
 
-RUN bundle install && \
-    gem install pry
+RUN bundle install
 
 CMD ["bundle", "exec", "rails", "server"]

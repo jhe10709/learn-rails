@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
-# Debugger
-gem 'byebug'
+
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.6'
@@ -39,6 +38,13 @@ gem 'spring',        group: :development
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
+
+# Debugger
+group :development do
+  gem 'pry'
+  gem 'pry-byebug'
+  gem 'byebug'
+end
 
 gem 'execjs'
 gem 'therubyracer', :platforms => :ruby

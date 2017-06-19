@@ -1,8 +1,10 @@
-
 class ArticlesController < ApplicationController
-  def index
 
+  http_basic_authenticate_with name: "dhh", password: "secret", except: [:index, :show]
+
+  def index
     @articles = Article.all
+    #binding.pry
   end
 
   def new
@@ -22,6 +24,7 @@ class ArticlesController < ApplicationController
   end
 
   def show
+    #require 'pry'; binding.pry
     @article = Article.find(params[:id])
   end
 

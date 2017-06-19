@@ -101,6 +101,24 @@ Install =docker= and =docker-compose=.
 
 * Rails learning
 
+  Create new project:
+
+  #+BEGIN_SRC shell
+    rails new blog
+  #+END_SRC
+
+  Generate new controller with the name =welcome= and action =index=.
+
+  #+BEGIN_SRC shell
+    rails generate controller welcome index
+  #+END_SRC
+
+  Generate just a controller
+
+  #+BEGIN_SRC shell
+    rails generate controller articles
+  #+END_SRC
+
   Show the routes:
 
   #+BEGIN_SRC shell :results drawer :dir ~/Git/learn-rails
@@ -148,4 +166,10 @@ Install =docker= and =docker-compose=.
 
   #+BEGIN_SRC sh
     rake db:migrate
+  #+END_SRC
+
+  Generate model with relation
+
+  #+BEGIN_SRC shell
+    rails generate model Comment commenter:string body:text article:references
   #+END_SRC
